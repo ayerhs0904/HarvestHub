@@ -1,0 +1,49 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: harvesthub-backend
+  profiles:
+    active: dev
+
+  datasource:
+    # Default to H2 embedded database with PostgreSQL mode for zero-setup local execution;
+    # can be overridden with standard env vars for real PostgreSQL container
+    url: ${SPRING_DATASOURCE_URL:jdbc:h2:mem:harvesthubdb;DB_CLOSE_DELAY=-1;MODE=PostgreSQL}
+    username: ${SPRING_DATASOURCE_USERNAME:sa}
+    password: ${SPRING_DATASOURCE_PASSWORD:}
+    driver-class-name: ${SPRING_DATASOURCE_DRIVER:org.h2.Driver}
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+        dialect: ${HIBERNATE_DIALECT:org.hibernate.dialect.H2Dialect}
+    open-in-view: false
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+jwt:
+  # Secret key with >= 256 bits for HMAC-SHA256
+  secret: ${JWT_SECRET:harvestHubSuperSecretSecretKey2026AgriculturalPlatformKeyMustBeAtLeast256BitsLong!}
+  expiration-ms: ${JWT_EXPIRATION_MS:86400000} # 24 hours
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: method
+
+logging:
+  level:
+    com.harvesthub: INFO
+    org.springframework.security: WARN
