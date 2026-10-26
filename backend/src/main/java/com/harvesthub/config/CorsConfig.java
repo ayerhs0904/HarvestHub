@@ -15,8 +15,20 @@ public class CorsConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        // Allow Vite dev port 5173, production port, and wildcard for ease of local demo
-        configuration.setAllowedOriginPatterns(List.of("http://localhost:*", "http://127.0.0.1:*"));
+        // Allow local dev origins, deployed cloud domains (Render/Vercel/Railway), and custom ALLOWED_ORIGINS
+        String envOrigins = System.getenv("ALLOWED_ORIGINS");
+        if (envOrigins != null && !envOrigins.isBlank()) {
+            configuration.setAllowedOriginPatterns(Arrays.asList(envOrigins.split(",")));
+        } else {
+            configuration.setAllowedOriginPatterns(List.of(
+                "http://localhost:*",
+                "http://127.0.0.1:*",
+                "https://*.vercel.app",
+                "https://*.onrender.com",
+                "https://*.railway.app",
+                "*"
+            ));
+        }
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept", "X-Requested-With", "Origin"));
         configuration.setExposedHeaders(List.of("Authorization"));

@@ -1,0 +1,55 @@
+﻿services:
+  # 1. HarvestHub Spring Boot Backend API
+  - type: web
+    name: harvesthub-backend
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    plan: free
+    region: oregon
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: docker
+      - key: SPRING_DATASOURCE_URL
+        fromDatabase:
+          name: harvesthub-db
+          property: connectionString
+      - key: SPRING_DATASOURCE_USERNAME
+        fromDatabase:
+          name: harvesthub-db
+          property: user
+      - key: SPRING_DATASOURCE_PASSWORD
+        fromDatabase:
+          name: harvesthub-db
+          property: password
+      - key: JWT_SECRET
+        generateValue: true
+      - key: ALLOWED_ORIGINS
+        value: "*"
+
+  # 2. HarvestHub React Frontend UI
+  - type: web
+    name: harvesthub-frontend
+    runtime: static
+    buildCommand: cd frontend && npm install && npm run build
+    staticPublishPath: ./frontend/dist
+    plan: free
+    region: oregon
+    envVars:
+      - key: VITE_API_BASE_URL
+        fromService:
+          type: web
+          name: harvesthub-backend
+          property: host
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+
+# 3. PostgreSQL Managed Database
+databases:
+  - name: harvesthub-db
+    databaseName: harvesthub
+    user: harvesthub
+    plan: free
+    region: oregon
