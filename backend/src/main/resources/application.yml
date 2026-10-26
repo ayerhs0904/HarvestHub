@@ -31,8 +31,8 @@ spring:
       path: /h2-console
 
 jwt:
-  # Secret key with >= 256 bits for HMAC-SHA256
-  secret: ${JWT_SECRET:harvestHubSuperSecretSecretKey2026AgriculturalPlatformKeyMustBeAtLeast256BitsLong!}
+  # Secret key must be set via JWT_SECRET environment variable (min 256-bit / 32 chars)
+  secret: ${JWT_SECRET}
   expiration-ms: ${JWT_EXPIRATION_MS:86400000} # 24 hours
 
 springdoc:
