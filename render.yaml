@@ -1,4 +1,4 @@
-﻿services:
+services:
   # 1. HarvestHub Spring Boot Backend API
   - type: web
     name: harvesthub-backend
@@ -31,16 +31,12 @@
   - type: web
     name: harvesthub-frontend
     runtime: static
-    buildCommand: cd frontend && npm install && npm run build
-    staticPublishPath: ./frontend/dist
-    plan: free
-    region: oregon
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
     envVars:
       - key: VITE_API_BASE_URL
-        fromService:
-          type: web
-          name: harvesthub-backend
-          property: host
+        value: https://harvesthub-backend.onrender.com
     routes:
       - type: rewrite
         source: /*
